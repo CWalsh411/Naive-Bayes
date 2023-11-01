@@ -12,14 +12,15 @@ dir_train_neg = r"C:\Users\Connor_Laptop\Documents\GitHub\CSC381\HomeWork2\movie
 
 # Function to preprocess files
 def preprocess_files(path):
-    script_path = "C:\\Users\\Connor_Laptop\\Documents\\GitHub\\CSC381\\HomeWork2\\pre-process.py"
+    script_path = "C:\\Users\\Connor_Laptop\\Documents\\GitHub\\Naive-Bayes\\pre-process.py"
     subprocess.call(["python3", script_path, path])
 
 # Function to get a list of files in a directory and preprocess them
 def get_files(path, filesarr):
     for x in os.listdir(path):
         if os.path.isfile(os.path.join(path, x)):
-            #preprocess_files(os.path.join(path, x))
+            if(preprocess_flag):
+                preprocess_files(os.path.join(path, x))
             filesarr.append(os.path.join(path, x))
     return filesarr
 
@@ -97,6 +98,30 @@ def test_NB():
 def main():
     global posfiles
     global negfiles
+    global preprocess_flag
+    global train_flag
+    global test_flag
+    print("Would you like to preprocess your files? (y/n)")
+    if(input() == "y"):
+        preprocess_flag = True
+    if(input() == "n"):
+        preprocess_flag = False
+    else:
+        print("Please enter y or n")
+    print("Would you like to retrain your model? (y/n)")
+    if(input() == "y"):
+        train_flag = True
+    if(input() == "n"):
+        train_flag = False
+    else:
+        print("Please enter y or n")
+    print("Would you like to test your model on a custom input? (y/n)")
+    if(input() == "y"):
+        test_flag = True
+    if(input() == "n"):
+        test_flag = False
+    else:
+        print("Please enter y or n")
     posfiles = get_files(dir_train_pos, [])
     negfiles = get_files(dir_train_neg, [])
     train_NB(posfiles, negfiles)
