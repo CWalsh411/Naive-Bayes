@@ -9,7 +9,7 @@ def lowercaseAndSeperatePunc(data):
         newstr += x
     return newstr
 
-input = open(sys.argv[1], 'r')
+input = open(sys.argv[1], 'r', errors="ignore")
 sentences = input.readlines()
 sentences = lowercaseAndSeperatePunc(sentences)
 input.close()

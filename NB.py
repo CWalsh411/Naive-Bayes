@@ -3,20 +3,21 @@ import os
 from pathlib import WindowsPath
 import subprocess
 
-dir_test_pos = r"C:\Users\Connor_Laptop\Documents\GitHub\CSC381\HomeWork2\movie-review-HW2\aclImdb\test\pos"
-dir_test_neg = r"C:\Users\Connor_Laptop\Documents\GitHub\CSC381\HomeWork2\movie-review-HW2\aclImdb\test\neg"
-dir_train_pos = r"C:\Users\Connor_Laptop\Documents\GitHub\CSC381\HomeWork2\movie-review-HW2\aclImdb\train\pos"
-dir_train_neg = r"C:\Users\Connor_Laptop\Documents\GitHub\CSC381\HomeWork2\movie-review-HW2\aclImdb\train\neg"
+dir_test_pos = r"movie-review-HW2\aclImdb\test\pos"
+dir_test_neg = r"movie-review-HW2\aclImdb\test\neg"
+dir_train_pos = r"movie-review-HW2\aclImdb\train\pos"
+dir_train_neg = r"movie-review-HW2\aclImdb\train\neg"
 
 
 
 # Function to preprocess files
 def preprocess_files(path):
-    script_path = "C:\\Users\\Connor_Laptop\\Documents\\GitHub\\Naive-Bayes\\pre-process.py"
+    script_path = "pre-process.py"
     subprocess.call(["python3", script_path, path])
 
 # Function to get a list of files in a directory and preprocess them
 def get_files(path, filesarr):
+    global preprocess_flag
     for x in os.listdir(path):
         if os.path.isfile(os.path.join(path, x)):
             if(preprocess_flag):
@@ -53,9 +54,7 @@ def train_NB(posfiles, negfiles):
     poswords = get_BOW_features(posfiles)
     negwords = get_BOW_features(negfiles)
     posprob = len(posfiles) / (2 * len(posfiles) + len(negfiles))
-    negprob = len(negfiles) / (2* len(posfiles) + len(negfiles))
-    
-    # You can calculate probabilities and other training steps here
+    negprob = len(negfiles) / (2* len(posfiles) + len(negfiles))    
 
 # Function to test the Naive Bayes classifier
 def test_NB():
@@ -77,9 +76,9 @@ def test_NB():
             for sentence in lines:
                 for word in sentence.split():
                     if word in poswords:
-                        word_scores['pos'] += math.log((poswords[word] + 1) / (len(poswords) + len(negwords)))
+                        word_scores['pos'] += math.log((poswords[word] + 1) / (2 * len(poswords) + len(negwords)))
                     if word in negwords:
-                        word_scores['neg'] += math.log((negwords[word] + 1) / (len(negwords) + len(poswords)))
+                        word_scores['neg'] += math.log((negwords[word] + 1) / (2 * len(negwords) + len(poswords)))
 
             # Add log probabilities of class priors (posprob and negprob)
             word_scores['pos'] += math.log(posprob)
@@ -102,26 +101,44 @@ def main():
     global train_flag
     global test_flag
     print("Would you like to preprocess your files? (y/n)")
-    if(input() == "y"):
+    inp = input()
+    if(inp == "y"):
         preprocess_flag = True
-    if(input() == "n"):
+    elif(inp == "n"):
         preprocess_flag = False
     else:
         print("Please enter y or n")
+        inp = input()
+        if(inp == "y"):
+            preprocess_flag = True
+        elif(inp == "n"):
+            preprocess_flag = False
     print("Would you like to retrain your model? (y/n)")
-    if(input() == "y"):
+    inp = input()
+    if(inp == "y"):
         train_flag = True
-    if(input() == "n"):
+    elif(inp == "n"):
         train_flag = False
     else:
         print("Please enter y or n")
+        inp = input()
+        if(inp == "y"):
+            train_flag = True
+        elif(inp == "n"):
+            train_flag = False
     print("Would you like to test your model on a custom input? (y/n)")
-    if(input() == "y"):
+    inp = input()
+    if(inp == "y"):
         test_flag = True
-    if(input() == "n"):
+    elif(inp == "n"):
         test_flag = False
     else:
         print("Please enter y or n")
+        inp = input()
+        if(inp == "y"):
+            test_flag = True
+        elif(inp == "n"):
+            test_flag = False
     posfiles = get_files(dir_train_pos, [])
     negfiles = get_files(dir_train_neg, [])
     train_NB(posfiles, negfiles)
